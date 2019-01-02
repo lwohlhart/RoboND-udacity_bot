@@ -73,7 +73,7 @@ This project tackles the problem of global localization which, if implemented an
 
 
 \section{Background}
-
+In order to 
 
 At this stage, you should begin diving into the technical details of your approach by explaining to the reader what are the characteristics of the filters, what localization method was chosen, and the reason that it was selected (i.e. particle filters). 
 This should be factual and authoritative, meaning you should not use language such as "I think this will work" or "Maybe Monte Carlo Localization with these parameters is better...". Instead, focus on items similar to, "Adaptive Monte Carlo Localization was chosen because..."
@@ -83,7 +83,16 @@ Provide a sufficient background into the scope of the problem technologically wh
 Briefly describe Kalman filters. Explain how they work and why they are used for localization. Additionally, discuss the drawbacks of linear Kalman filters and how Extended Kalman Filters (EKFs) help resolve some of these issues.
 
 \subsection{Particle Filters}
-Briefly explain what a particle filter is, how it is used, and why it is useful.
+A particle filter algorithm starts by instantiating a number of particles where each represents one guess about the position and orientation of the robot. For every particle a weight can be calculated which corresponds to the likelihood of observing the current readings from the available range-finder senors (e.g.  lidar, RGB-D cameras or others). If a particle matches the observation compared to the ground thruth deduced from the known map better, it gets a bigger weight than others which are less likely. Every motion step of the robot is also applied to each particle with some added noise. After a specific resample interval (usually also every motion step) the particles are then randomly resampled based on their weights and new particles might be spawned in proximity to the previously higher weighted particles. 
+
+By iteratively applying the algorithm:
+\begin{itemize}      
+      \item motion update: apply robots motion with noise to each particle
+      \item sensor update: assign weights to particles based likelihood of matching sensor readings
+      \item resample: randomly sample current particle set and inset new particles based on weighted probabilities
+\end{itemize}
+the particles converge to the true pose of the robot because those which best fit the incoming evidence from the sensors have the highest chance of surviving the resample step.
+
 
 \subsection{Comparison / Contrast}
 Explain the benefits and disadvantages of using a Kalman Filter / Particle Filter. Why would you use one over the other? Also inform the reader that the work presented here will be using only particle filters. 
