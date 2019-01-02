@@ -23,7 +23,9 @@
 
 \begin{abstract}
 The goal of the project at hand is the examination of the capabilities of a widely used localization technique known as Adaptive Monte Carlo Localization (AMCL).
-This method is based on a particle filter algorithm
+This method is based on a particle filter algorithm which will be conceptionally compared to another localization strategy using a Kalman Filter. 
+For the evaluation of the localization method, two different robots models are placed in a ROS/Gazebo/RViz simulation environment in which they have to navigate through a maze world to reach a specified goal position.
+These two mobile robots both feature a differential drive, one of which is given by the Udacity project description and the creation of the second (custom) robot model will be discussed within this report.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -38,42 +40,41 @@ Robot, IEEEtran, Udacity, \LaTeX, Localization.
 \section{Introduction}
 \label{sec:introduction}
 
-\IEEEPARstart{T}{he} introduction should provide some material regarding the history of the problem, why it is important and what is intended to be achieved. If there exists any previous attempts to solve this problem, this is a great place to note these while conveying the differences in your approach (if any). The intent is to provide enough information for the reader to understand why this problem is interesting and setting up the conversation for the solution you have provided
-Use this space to introduce your localization task and how you wish to accomplish it; save the details about the robot construction for later (simulation is a good point for this information). 
-If you have any papers / sites / repositories you have referenced for your robot, please make sure to cite them.
+\IEEEPARstart{T}{he} capability of accurately determining the pose of a mobile robot is a crucial necessity for being able to autonomously navigate any given environment.
+The problem of localization poses three challenges to tackle, which are known as: local localization, global localization and the kidnapped robot problem.
+The goal of local localization is to keep track of the pose changes due to robot movement given a known initial pose. In global localization the robots pose starts out as being unknown and the objective is to determine the pose by comparing observations to a ground truth map. The kidnapped robot problem is similar to global localization since the goal is also to find the robots pose without knowing it's initial location, but with the challenging additional constraint that the robot might be randomly placed at an entirely different spot in the world at any time. 
+This project tackles the problem of global localization which, if implemented and tuned correctly, enables the robots to autonomously navigate the maze world depicted in Figure~\ref{fig:maze} to reach a specified goal pose. 
+
 
 %example for inserting image
 \begin{figure}[thpb]
       \centering
-      \includegraphics[width=\linewidth]{RobotRevolution5}
-      \caption{Robot Revolution.}
-      \label{fig:robot1}
+      \includegraphics[width=\linewidth]{maze_world}
+      \caption{Maze environment}
+      \label{fig:maze}
 \end{figure}
 
-\subsection{Subsection Heading Here}
-Subsection text here.
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
-
-%example for building table
-\begin{table}[h]
-\caption{Table}
-\label{table_example}
-\begin{center}
-\begin{tabular}{|c||c|}
-\hline
-One & Two\\
-\hline
-Three & Four\\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
+% %example for building table
+% \begin{table}[h]
+% \caption{Table}
+% \label{table_example}
+% \begin{center}
+% \begin{tabular}{|c||c|}
+% \hline
+% One & Two\\
+% \hline
+% Three & Four\\
+% \hline
+% \end{tabular}
+% \end{center}
+% \end{table}
 
 
 
 \section{Background}
+
+
 At this stage, you should begin diving into the technical details of your approach by explaining to the reader what are the characteristics of the filters, what localization method was chosen, and the reason that it was selected (i.e. particle filters). 
 This should be factual and authoritative, meaning you should not use language such as "I think this will work" or "Maybe Monte Carlo Localization with these parameters is better...". Instead, focus on items similar to, "Adaptive Monte Carlo Localization was chosen because..."
 Provide a sufficient background into the scope of the problem technologically while also identifying some of the current challenges in robot localization and why the problem domain is an important piece of robotics.\cite{lamport1994latex}

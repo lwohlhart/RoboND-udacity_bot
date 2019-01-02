@@ -12,7 +12,7 @@ transform_tolerance: 0.2
 
 # footprint: [[x0, y0], [x1, y1], ... [xn, yn]]
 robot_radius: 0.25
-inflation_radius: 0.2
+inflation_radius: 0.5
 # Here we set either the footprint of the robot or the radius of the robot if it is circular. In the case of specifying the footprint, the center of the robot is assumed to be at (0.0, 0.0) and both clockwise and counterclockwise specifications are supported. We'll also set the inflation radius for the costmap. The inflation radius should be set to the maximum distance from obstacles at which a cost should be incurred. For example, setting the inflation radius at 0.55 meters means that the robot will treat all paths that stay 0.55 meters or more away from obstacles as having equal obstacle cost.
 
 observation_sources: laser_scan_sensor
