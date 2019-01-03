@@ -73,11 +73,13 @@ This project tackles the problem of global localization which, if implemented an
 
 
 \section{Background}
-In order to 
+Solving a localization problem boils down to modelling the robots pose changes resulting from the motions executed by the robot and interpreting the available sensor readings to gather evidence from the environment which can be compared to a known ground truth map.
+Both these processes are subject to noise since motions can't be performed with absolute accuracy and sensors don't capture the exact truth about the world.
 
-At this stage, you should begin diving into the technical details of your approach by explaining to the reader what are the characteristics of the filters, what localization method was chosen, and the reason that it was selected (i.e. particle filters). 
-This should be factual and authoritative, meaning you should not use language such as "I think this will work" or "Maybe Monte Carlo Localization with these parameters is better...". Instead, focus on items similar to, "Adaptive Monte Carlo Localization was chosen because..."
-Provide a sufficient background into the scope of the problem technologically while also identifying some of the current challenges in robot localization and why the problem domain is an important piece of robotics.\cite{lamport1994latex}
+... EKF for local localization;
+AMCL for global localization
+choose AMCL; easier implementation; possible handling of kidnapped robot problem; simple modelling of nonlinear motions; initial state not necessarily known
+
 
 \subsection{Kalman Filters}
 The Kalman Filter is a widely used state estimation algorithm which starts out with an initial state (e.g. a state vector holding the estimated x and y position and the angular orientation of a robot) as well as a covariance matrix expressing the certainty of the estimate and iteratively applies measurement updates and state predictions for each motion step of the robot.
@@ -89,9 +91,8 @@ The so called Kalman Gain is then computed by projecting the covariance to the m
 
 Therefore the Kalman Gain is subsequently used to update the state and covariance estimate.
 
-
-Additionally, discuss the drawbacks of linear Kalman filters and how Extended Kalman Filters (EKFs) help resolve some of these issues.
-
+One drawback of the standard Kalman Filter is that it can't deal with non linear state transitions or measurement functions. Applying a non linear transformation on a Gaussian distribution yields a probability distribution which is non Gaussian and since robots usually perform non linear motions such as driving along a circle or a curve the standard Kalman Filter is not usable for most robotics applications.
+To overcome this problem the Extended Kalman Filter (EKF) was introduced which linearizes the non-linear transformations by approximating them with a first order Taylor series expansion. This linearization is only valid for a small region but if the update cycles are short enough the EKF has shown to be able to produce a good and stable state/pose estimation.
 
 
 \subsection{Particle Filters}
