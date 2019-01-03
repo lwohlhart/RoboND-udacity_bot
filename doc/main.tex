@@ -80,16 +80,28 @@ This should be factual and authoritative, meaning you should not use language su
 Provide a sufficient background into the scope of the problem technologically while also identifying some of the current challenges in robot localization and why the problem domain is an important piece of robotics.\cite{lamport1994latex}
 
 \subsection{Kalman Filters}
-Briefly describe Kalman filters. Explain how they work and why they are used for localization. Additionally, discuss the drawbacks of linear Kalman filters and how Extended Kalman Filters (EKFs) help resolve some of these issues.
+The Kalman Filter is a widely used state estimation algorithm which starts out with an initial state (e.g. a state vector holding the estimated x and y position and the angular orientation of a robot) as well as a covariance matrix expressing the certainty of the estimate and iteratively applies measurement updates and state predictions for each motion step of the robot.
+
+The state prediction step takes the current motion commands of the robot, maps them to the state domain using the predefined state transition matrix and combines the result with the prior state and covariance plus additional gaussian noise to account for noisy motions. This yields the posterior belief about the robots state after a motion step.
+
+The measurement update step uses the measurement function to map the previously calculated posterior state of the prediction step to the measurement domain. This means calculating the expected values of all available sensors, assuming the robot were in this exact state. Computing the difference between this assumption and the actual sensor readings yields the measurement residual.
+The so called Kalman Gain is then computed by projecting the covariance to the measurement domain, adding potential measurement noise to all components and reprojecting this result to the state domain. This is a measure indicating the ratio of preserving the previous state estimate and taking in the new measurement evidence. It ranges from a 0-vector which keeps the previous state estimate entirely, to the pseudo inverse of the measurement function which overrides the estimate with the incoming measurement data.
+
+Therefore the Kalman Gain is subsequently used to update the state and covariance estimate.
+
+
+Additionally, discuss the drawbacks of linear Kalman filters and how Extended Kalman Filters (EKFs) help resolve some of these issues.
+
+
 
 \subsection{Particle Filters}
-A particle filter algorithm starts by instantiating a number of particles where each represents one guess about the position and orientation of the robot. For every particle a weight can be calculated which corresponds to the likelihood of observing the current readings from the available range-finder senors (e.g.  lidar, RGB-D cameras or others). If a particle matches the observation compared to the ground thruth deduced from the known map better, it gets a bigger weight than others which are less likely. Every motion step of the robot is also applied to each particle with some added noise. After a specific resample interval (usually also every motion step) the particles are then randomly resampled based on their weights and new particles might be spawned in proximity to the previously higher weighted particles. 
+A particle filter algorithm for robot localization starts by instantiating a number of particles each representing one guess about the position and orientation of the robot. For every particle a weight can be calculated which corresponds to the likelihood of observing the current readings from the available range-finder senors (e.g.  lidar, RGB-D cameras or others). If a particle matches the observation compared to the ground thruth deduced from the known map better, it gets a bigger weight than others which are less likely. Every motion step of the robot is also applied to each particle with some added noise. After a specific resample interval (usually also every motion step) the particles are then randomly resampled based on their weights and new particles might be spawned in proximity to the previously higher weighted particles. 
 
 By iteratively applying the algorithm:
 \begin{itemize}      
       \item motion update: apply robots motion with noise to each particle
       \item sensor update: assign weights to particles based likelihood of matching sensor readings
-      \item resample: randomly sample current particle set and inset new particles based on weighted probabilities
+      \item resample: randomly sample current particle set and insert new particles based on weighted probabilities
 \end{itemize}
 the particles converge to the true pose of the robot because those which best fit the incoming evidence from the sensors have the highest chance of surviving the resample step.
 
