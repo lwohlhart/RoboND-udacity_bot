@@ -55,31 +55,15 @@ This project tackles the problem of global localization which, if implemented an
 \end{figure}
 
 
-% %example for building table
-% \begin{table}[h]
-% \caption{Table}
-% \label{table_example}
-% \begin{center}
-% \begin{tabular}{|c||c|}
-% \hline
-% One & Two\\
-% \hline
-% Three & Four\\
-% \hline
-% \end{tabular}
-% \end{center}
-% \end{table}
-
-
 
 \section{Background}
-Solving a localization problem boils down to modelling the robots pose changes resulting from the motions executed by the robot and interpreting the available sensor readings to gather evidence from the environment which can be compared to a known ground truth map.
-Both these processes are subject to noise since motions can't be performed with absolute accuracy and sensors don't capture the exact truth about the world.
+Solving a localization problem boils down to modelling the robots pose changes resulting from the motions executed by the actuators and interpreting the available sensor readings to gather evidence from the environment which can be compared to a known ground truth map.
+Both these processes are subject to noise since motions can't be performed with absolute accuracy and sensors don't capture the exact truth about the surrounding world.
+The objective of a localization algorithm is therefore to filter out the motion and measurement noise and yield a robust estimation of the robots pose. 
 
-... EKF for local localization;
-AMCL for global localization
-choose AMCL; easier implementation; possible handling of kidnapped robot problem; simple modelling of nonlinear motions; initial state not necessarily known
+The (Extended) Kalman Filter is a well established method for local localization and will discussed in comparison to the Adaptive Monte Carlo localization particle filter which is able to solve global localization problems.
 
+Since in this project setup the initial pose of the robot is not known, the Adaptive Monte Carlo Localization (AMCL) method was chosen and implemented. Additionally this approach provides a simple way of modelling the nonlinear motions of the robot and is capable of solving the kidnapped robot problem as will be discussed in the following sections.
 
 \subsection{Kalman Filters}
 The Kalman Filter is a widely used state estimation algorithm which starts out with an initial state (e.g. a state vector holding the estimated x and y position and the angular orientation of a robot) as well as a covariance matrix expressing the certainty of the estimate and iteratively applies measurement updates and state predictions for each motion step of the robot.
@@ -96,7 +80,7 @@ To overcome this problem the Extended Kalman Filter (EKF) was introduced which l
 
 
 \subsection{Particle Filters}
-A particle filter algorithm for robot localization starts by instantiating a number of particles each representing one guess about the position and orientation of the robot. For every particle a weight can be calculated which corresponds to the likelihood of observing the current readings from the available range-finder senors (e.g.  lidar, RGB-D cameras or others). If a particle matches the observation compared to the ground thruth deduced from the known map better, it gets a bigger weight than others which are less likely. Every motion step of the robot is also applied to each particle with some added noise. After a specific resample interval (usually also every motion step) the particles are then randomly resampled based on their weights and new particles might be spawned in proximity to the previously higher weighted particles. 
+A particle filter algorithm for robot localization starts by instantiating a number of uniformly distributed particles each representing one guess about the position and orientation of the robot. For every particle a weight can be calculated which corresponds to the likelihood of observing the current readings from the available range-finder sensors (e.g.  lidar, RGB-D cameras or others). If a particle matches the observation compared to the ground thruth deduced from the known map better, it gets a bigger weight than others which are less likely. Every motion step of the robot is also applied to each particle with some added noise. After a specific resample interval (usually also every motion step) the particles are then randomly resampled based on their weights and new particles might be spawned in proximity to the previously higher weighted particles. 
 
 By iteratively applying the algorithm:
 \begin{itemize}      
@@ -106,21 +90,40 @@ By iteratively applying the algorithm:
 \end{itemize}
 the particles converge to the true pose of the robot because those which best fit the incoming evidence from the sensors have the highest chance of surviving the resample step.
 
+If correctly configured, the Adaptive Monte Carlo Localization particle filter is even capable of solving the kidnapped robot problem by sparsely inserting particles in randomly chosen remote areas of the particle cloud which allows the algorithm to recover when losing track of the actual pose due to the kidnapping.
+
 
 \subsection{Comparison / Contrast}
-Explain the benefits and disadvantages of using a Kalman Filter / Particle Filter. Why would you use one over the other? Also inform the reader that the work presented here will be using only particle filters. 
 
-%example for Bullet point list
-\begin{itemize}
-\item example 1
-\item example 2
-\end {itemize}
+As outlined previously, a major advantage of the Adaptive Monte Carlo Localization method is that it isn't restricted to the assumption of a linear gaussian state space as is the case for a Kalman Filter approach. Any motion or measurement noise model can be used to compute the posterior particle estimates. Furthermore the AMCL is able to solve global localization and even the kidnapped robot problem since it doesn't require an initial state to converge. It is capable of recovering from initial or intermediate erroneous state estimates which makes filter much more robust. 
 
-%example for numbered list
-\begin{enumerate}
-\item example 1
-\item example 2
-\end{enumerate}
+While the EKF is in general superior in terms of memory and computational efficiency as well as achievable localization accuracy the AMCL allows the user to fully take control of said parameters. By tuning the number of particles used for the filter one can adjust the tradeoff between localization accuracy and resource efficiency to fit the needs of the application.
+
+Table~\ref{tab:mcl_ekf_comparison}, taken from the Udacity lecture "Power of MCL", summarizes the advantages and disadvantages of the discussed localization techniques.
+
+
+%example for building table
+\begin{table}[h]
+\caption{MCL vs EKF comparison}
+\label{tab:mcl_ekf_comparison}
+\begin{center}
+\begin{tabular}{|l||c|c|}
+\hline
+& MCL & EKF\\ \hline \hline
+Measurements & Raw Measurements & Landmarks \\ \hline
+Measurement Noise &  Any &  Gaussian \\ \hline
+Posterior &  Particles & Gaussian \\ \hline
+Memory Efficiency & +  & + +  \\ \hline
+Time Efficiency&  +  & + +  \\ \hline
+Ease of Implementation & + +  & +  \\ \hline
+Resolution & +  & + + \\ \hline
+Robustness & + +  & - \\ \hline
+Memory/Resolution Control & +  & - \\ \hline
+Global Localization & +  & - \\ \hline
+State Space &  Multimodal Discrete & Unimodal Continuous \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
 
 \section{Simulations}
 This section should discuss the performance of robots in simulation. Items to include are the robot model design, packages used, and the parameters chosen for the robot to properly localize itself. The information provided here is critical if anyone would like to replicate your results. After all, the intent of reports such as these are to convey information and build upon ideas so you want to ensure others can validate your process.
@@ -188,7 +191,7 @@ Examples:
 \item What would need to be done?
 \item Computation time/resource considerations?
 \end{enumerate}
-
+\cite{lamport1994latex}
 
 
 \bibliography{bib}
