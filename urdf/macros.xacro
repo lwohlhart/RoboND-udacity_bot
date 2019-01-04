@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<robot name="lw_udacity_bot_macros" 
+<robot name="lw_mse6_bot_macros" 
     xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:macro name="wheel" params="lr">
         <link name="${lr}_wheel">

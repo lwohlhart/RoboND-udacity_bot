@@ -22,7 +22,7 @@
   <include file="$(find udacity_bot)/launch/robot_description.launch"/>
 
   <!-- spawn udacity_bot in udacity.world environment -->
-  <node name="urdf_launcher" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param robot_description -model udacity_bot"/>
+  <node name="urdf_launcher" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param robot_description -model lw_mse6_bot"/>
   
   <!--launch rviz-->
   <node name="rviz" pkg="rviz" type="rviz" respawn="false"/>
