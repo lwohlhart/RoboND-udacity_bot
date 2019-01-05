@@ -7,8 +7,8 @@
 \documentclass[10pt,journal,compsoc]{IEEEtran}
 
 \usepackage[pdftex]{graphicx}    
-\usepackage{cite}
-\hyphenation{op-tical net-works semi-conduc-tor}
+% \usepackage{cite}
+% \hyphenation{op-tical net-works semi-conduc-tor}
 
 
 \begin{document}
@@ -49,7 +49,7 @@ This project tackles the problem of global localization which, if implemented an
 %example for inserting image
 \begin{figure}[thpb]
       \centering
-      \includegraphics[width=\linewidth]{maze_world}
+      \includegraphics[width=\linewidth]{img/maze_world}
       \caption{Maze environment}
       \label{fig:maze}
 \end{figure}
@@ -120,12 +120,18 @@ Resolution & +  & + + \\ \hline
 Robustness & + +  & - \\ \hline
 Memory/Resolution Control & +  & - \\ \hline
 Global Localization & +  & - \\ \hline
-State Space &  Multimodal Discrete & Unimodal Continuous \\ \hline
+State Space &  Multimodal Disc. & Unimodal Cont. \\ \hline
 \end{tabular}
 \end{center}
 \end{table}
 
 \section{Simulations}
+
+
+% package dependencies: from clean install ( either navigation stack or separate packages: move_base, amcl, map_server ... find more)
+
+
+
 This section should discuss the performance of robots in simulation. Items to include are the robot model design, packages used, and the parameters chosen for the robot to properly localize itself. The information provided here is critical if anyone would like to replicate your results. After all, the intent of reports such as these are to convey information and build upon ideas so you want to ensure others can validate your process.
 You should have at least two images here: one that shows your standard robot used in the first part of the project, and a second robot that you modified / built that is different from the first robot. Remember to watermark all of your images as well. 
 
@@ -137,6 +143,13 @@ You should describe what you achieved for localization in the project with the b
 \subsubsection{Model design}
 The Robot's design considerations should include: the size of the robot, the layout of sensors. This information can be shown in the form of a chart / table.
 
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width=\linewidth]{img/udacity_bot}
+      \caption{Udacity Bot}
+      \label{fig:udacity_bot}
+\end{figure}
+
 \subsubsection{Packages Used}
 The packages used in the project should be specified as well as the topics received and published; the services it used and provided should also be addressed. 
 
@@ -146,17 +159,60 @@ Localization parameters in the AMCL node should be described, as well as move\_b
 \subsection{Personal Model}
 % ditto
 \subsubsection{Model design}
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width=\linewidth]{img/blender_mse6_chassis}
+      \caption{Blender: MSE6 chassis design}
+      \label{fig:blender_design_mse6}
+\end{figure}
+
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width=\linewidth]{img/lw_mse6_bot}
+      \caption{MSE6 Bot}
+      \label{fig:mse6_bot}
+\end{figure}
 \subsubsection{Packages Used}
 \subsubsection{Parameters}
 
 
 \section{Results}
+
 Present an unbiased view of your robot's performance and justify your stance with facts. Do the localization results look reasonable? What is the duration for the particle filters to converge? How long does it take for the robot to reach the goal? Does it follow a smooth path to the goal? Does it have unexpected behavior in the process? \\
 For demonstrating your results, it is incredibly useful to have some watermarked charts, tables, and/or graphs for the reader to review. This makes ingesting the information quicker and easier.
 
 \subsection{Localization Results}
 \subsubsection{Benchmark}
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width=\linewidth]{img/particles_initial}
+      \caption{Initial AMCL particles}
+      \label{fig:initial_amcl_particles}
+\end{figure}
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width=\linewidth]{img/udacity_bot_goal_location}
+      \caption{Udacity Bot at goal location}
+      \label{fig:udacity_bot_goal_location}
+\end{figure}
+
+
+
+
 \subsubsection{Student}
+
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width=\linewidth]{img/lw_mse6_bot_particles_converged}
+      \caption{AMCL particles converging}
+      \label{fig:amcl_particles_converging}
+\end{figure}
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width=\linewidth]{img/lw_mse6_bot_goal_location}
+      \caption{MSE6 Bot at goal location}
+      \label{fig:mse6_bot_goal_location}
+\end{figure}
 
 \subsection{Technical Comparison} % only facts
 Discuss the difference of the layout, parameters, performance etc. between the benchmark robot and your robot. It is acceptable for your custom robot to perform worse than the provided robot. The focus is on learning and understanding, not performance. 
@@ -186,11 +242,6 @@ Examples:
 \item Sensor Amount
 \end{itemize}
 
-\subsection{Hardware Deployment}
-\begin{enumerate}
-\item What would need to be done?
-\item Computation time/resource considerations?
-\end{enumerate}
 \cite{lamport1994latex}
 
 
