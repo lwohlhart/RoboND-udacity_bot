@@ -300,33 +300,73 @@ The number of translational and rotational velocity pairs to consider can be con
 Then it is rated with regards to the objective cost function balancing the tradeoff between sticking to the proposed path (\texttt{pdist}), reaching the next local goal (\texttt{gdist}) and staying away from obstacles (\texttt{occdist}).
 
 
+The particle filter implemented in the AMCL package is configured to yield satisfactory localization performance while keeping the computational load manageable.
+
 \begin{table}[h]
       \caption{AMCL parameterization}
       \label{tab:amcl_parameterization}
       \begin{center}
             \begin{tabular}{|l|c|}  \hline
 min\_particles & 50 \\ \hline
-max\_particles & 100 \\ \hline
+max\_particles & 200 \\ \hline
 update\_min\_d & 0.1 \\ \hline
 update\_min\_a & 0.26 \\ \hline
 resample\_interval & 1 \\ \hline
-recovery\_alpha\_slow & 0.001 \\ \hline
-recovery\_alpha\_fast & 0.1 \\ \hline
+recovery\_alpha\_slow & 0.0 \\ \hline
+recovery\_alpha\_fast & 0.0 \\ \hline
+
+initial\_pose\_x & 0.0  \\ \hline
+initial\_pose\_y & 0.0  \\ \hline
+initial\_cov\_xx & 20.0  \\ \hline
+initial\_cov\_yy & 20.0  \\ \hline
 
 laser\_max\_beams & 60 \\ \hline
 % odom\_model\_type & diff \\ \hline
-odom\_alpha1 & 0.05 \\ \hline
-odom\_alpha2 & 0.05 \\ \hline
-odom\_alpha3 & 0.05 \\ \hline
-odom\_alpha4 & 0.05 \\ \hline
+odom\_alpha1 & 0.02 \\ \hline
+odom\_alpha2 & 0.02 \\ \hline
+odom\_alpha3 & 0.02 \\ \hline
+odom\_alpha4 & 0.02 \\ \hline
 \end{tabular}
 \end{center}
 \end{table}                  
 
 
+
+The main aspect to control is the amount of particles used for the filtering process. To solve the global localization problem at hand it suffices to operate with 50 to 200 particles. The \texttt{resample\_interval} of 1 ensures a resampling of the particle set after every motion step while \texttt{update\_min\_d} and \texttt{update\_min\_a} declare the minimum translational and angular change between steps to update.
+
+Setting the \texttt{initial\_pose\_(x|y)} to (0.0, 0.0) with an \texttt{initial\_cov\_(xx|yy)} of (20.0, 20.0) expresses very high uncertainty about the initial state since this a global localization problem. The resulting initial distribution of particles is shown in Figure~\ref{fig:particles_initial_high_cov}.
+
+The parameters \texttt{odom\_alpha\_(1,2,3,4)} specify the amount of noise added to the particles after a motion step to account for inaccurately executed motions. 
+
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width=\linewidth]{img/particles_initial_high_cov}
+      \caption{Initial particle distribution}
+      \label{fig:particles_initial_high_cov}
+\end{figure}
+
+One could also cope with the possibility of having to solve the kidnapped robot problem by adjust the following parameters:
+
+\begin{table}[h]
+      \caption{AMCL parameterization for kidnapped robots}
+      \label{tab:amcl_parameterization}
+      \begin{center}
+            \begin{tabular}{|l|c|}  \hline
+      kld\_err & 0.005 \\ \hline
+      kld\_z & 0.95\\ \hline
+      recovery\_alpha\_slow & 0.01  \\ \hline
+      recovery\_alpha\_fast & 0.5  \\ \hline
+      \end{tabular}
+\end{center}
+\end{table}        
+The parameters \texttt{recover\_alpha\_(slow|fast)} control the thresholds of average particle weights needed to randomly spawn new particles in unrelated locations to recover from erroneous pose estimates.
+
 \subsection{Personal Model}
 % ditto
+The custom robot model is inspired by the MSE-6-series repair droid\cite{MSE-6-series-droid} used by the Galactic Empire. 
 \subsubsection{Model design}
+The chassis of the MSE-6 repair droid (shown in Figure~\ref{fig:blender_design_mse6}) consists of a COLLADA mesh, modelled using the open source 3D modelling softwar blender\cite{Blender}. The format is an XML based description for digital assets exchange, which can be included in a URDF file.
+
 \begin{figure}[thpb]
       \centering
       \includegraphics[width=\linewidth]{img/blender_mse6_chassis}
