@@ -42,7 +42,7 @@ TrajectoryPlannerROS:
 #  + occdist_scale * (maximum obstacle cost along the trajectory in obstacle cost (0-254))
 
   meter_scoring: true # (bool, default: false) Whether the gdist_scale and pdist_scale parameters should assume that goal_distance and path_distance are expressed in units of meters or cells. Cells are assumed by default. New in navigation 1.3.1
-  pdist_scale: 3.5 # (double, default: 0.6) The weighting for how much the controller should stay close to the path it was given, maximal possible value is 5.0
+  pdist_scale: 1.0 # (double, default: 0.6) The weighting for how much the controller should stay close to the path it was given, maximal possible value is 5.0
   # gdist_scale: 0.6 # (double, default: 0.8) The weighting for how much the controller should attempt to reach its local goal, also controls speed, maximal possible value is 5.0
   # occdist_scale: # (double, default: 0.01) The weighting for how much the controller should attempt to avoid obstacles
   # heading_lookahead: 0.5 # (double, default: 0.325) How far to look ahead in meters when scoring different in-place-rotation trajectories

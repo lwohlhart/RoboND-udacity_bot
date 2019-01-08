@@ -254,39 +254,51 @@ The \texttt{inflation\_radius} defines the extent to which the cost of a detecte
 Together with the \texttt{robot\_radius} it is used to define how strongly the navigation algorithm avoids coming close to obstacles.
 
 Both maps are regulary updated and published with their respective frequencies.
-The global costmap is a static map covering 
-
-both maps: computability
-width
-height
-resolution
-
+The global costmap is a static (10x10) map covering the world while the local costmap is not static but uses the rolling window approach to model a small section of the local surroundings of the robot.
+This way the local map can be relatively small (3x3) making it computationally less expensive to derive a local navigation policy. 
+The resolution of both maps can be adjusted to fit the necessary granularity for collision free navigation while keeping memory and processing requirements minimal.
 
 
 \begin{table}[h]
       \caption{NavFN local trajectory planner parameterization}
       \label{tab:planner_parameterization}
       \begin{center}
-            \begin{tabular}{|l|c|}  \hline
+            \begin{tabular}{|l|c|}
+      \multicolumn{2}{c}{Robot Configuration} \\ \hline
       acc\_lim\_x & 2.0 \\ \hline
       acc\_lim\_theta & 2.0 \\ \hline
       max\_vel\_x & 0.4 \\ \hline
+      min\_vel\_x & 0.1 \\ \hline
+      max\_vel\_theta & 1.0 \\ \hline
+      min\_vel\_theta & -1.0  \\ \hline
+      min\_in\_place\_vel\_theta & 0.4 \\ \hline
+      escape\_vel & -0.1 \\ \hline
       holonomic\_robot & false \\ \hline
+
+      \multicolumn{2}{c}{Forward Simulation} \\ \hline
       sim\_time & 1.5 \\ \hline
+      sim\_granularity & 0.025 \\ \hline
+      angular\_sim\_granularity & 0.025\\ \hline
       vx\_samples & 10 \\ \hline
+      vtheta\_samples & 20 \\ \hline
       controller\_frequency & 10.0 \\ \hline
+
+      \multicolumn{2}{c}{Trajectory Scoring} \\ \hline
       meter\_scoring & true \\ \hline
-      pdist\_scale & 3.5 \\ \hline
+      pdist\_scale & 1.0 \\ \hline
+      gdist\_scale & 0.8 \\ \hline
+      occdist\_scale & 0.01 \\ \hline
+      dwa & true \\ \hline
             \end{tabular}
       \end{center}
 \end{table}                  
 
-sim\_time
-controller\_frequency
-vx\_samples
+The trajectory planner uses the Dynamic Window Approach (Fox et al.\cite{Fox-1997-16403}) to derive a local navigation policy at each control cycle (\texttt{controller\_frequency}) for the command velocities of the actuators, resulting in a piecewise approximation of the path with circular arcs.
+This is done by sampling directly from the subspace of rotational and translational velocities that are reachable within the next timeframe, given the current state and capabilities of the robot defined by acceleration and velocity limits.
 
+The number of translational and rotational velocity pairs to consider can be configured with \texttt{vx\_samples} and \texttt{vtheta\_samples}. Each velocity proposal is forward simulated for a short time interval defined by \texttt{sim\_time} with a step size of \texttt{sim\_granularity} and \texttt{angular\_sim\_granularity}.
+Then it is rated with regards to the objective cost function balancing the tradeoff between sticking to the proposed path (\texttt{pdist}), reaching the next local goal (\texttt{gdist}) and staying away from obstacles (\texttt{occdist}).
 
-Localization parameters in the AMCL node should be described, as well as move\_base parameters in the configuration file. You should be able to clearly demonstrate your understanding of the impact of these parameters.
 
 \begin{table}[h]
       \caption{AMCL parameterization}
