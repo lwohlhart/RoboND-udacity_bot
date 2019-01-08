@@ -180,6 +180,7 @@ The dimension of the individual parts is shown in detail in Table~\ref{tab:udaci
 \end{figure}
 
 \subsubsection{Packages Used}
+\label{sec:packages_udacity_bot}
 
 The ROS package created for the simulation utilizes several components from the NavigationStack meta package as well as default ROS nodes. 
 All necessary external packages, which are not present in the default ROS-Kinetic installation including Gazebo and RViz tooling, are declared as dependencies in the package.xml. 
@@ -374,6 +375,32 @@ The chassis of the MSE-6 repair droid (shown in Figure~\ref{fig:blender_design_m
       \label{fig:blender_design_mse6}
 \end{figure}
 
+\begin{table}[h]
+      \caption{lw\_mse6\_bot model}
+      \label{tab:lw_mse6_bot_model}
+      \begin{center}
+            \begin{tabular}{|l||c|c|} 
+                  \hline
+                  Part & Geometry & Dimension\\ \hline \hline
+                  Chassis & Mesh &  \\ 
+                        & Outer-Dimensions & 0.675 x 0.3 x 0.236 \\
+                        & Origin & x: 0.0375 y: 0.0 z: 0.062 \\ \hline 
+                  Back/Front caster & Sphere & radius: 0.0499 \\ 
+                  & Origin & x: $\pm$ 0.15 y: 0.0 z: -0.05 \\ \hline 
+                  Left/Right Wheel & Cylinder & radius: 0.1, height: 0.05 \\ 
+                  & Origin & x: 0.0 y: $\pm$ 0.15 z: 0.0 \\ \hline \hline  
+                  Camera Sensor & Cube &  0.05 x 0.05 x 0.05\\ 
+                  & Origin & x: 0.3 y: 0.0 z: 0.08 \\ \hline 
+                  Laser Range Sensor & Mesh &  0.1 x 0.1 x 0.1\\ 
+                  (Hokuyo)  & Origin & x: 0.2 y: 0.0 z: 0.15 \\ \hline  
+            \end{tabular}
+      \end{center}
+\end{table}
+
+The chassis is placed on a a back- and front-caster for stability and linked to two cylindrical wheels resulting in a differential drive robot. The laser range sensor is mounted on top of the chassis and the camera sensor sits on front of the robot.
+The entire robot is depicted in Figure~\ref{fig:mse6_bot} and the dimensions are declared in Table~\ref{tab:lw_mse6_bot_model}.
+
+
 \begin{figure}[thpb]
       \centering
       \includegraphics[width=\linewidth]{img/lw_mse6_bot}
@@ -381,8 +408,24 @@ The chassis of the MSE-6 repair droid (shown in Figure~\ref{fig:blender_design_m
       \label{fig:mse6_bot}
 \end{figure}
 \subsubsection{Packages Used}
-\subsubsection{Parameters}
+The MSE6 bot uses the same ROS packages as the udacity\_bot described in section~\ref{sec:packages_udacity_bot}
 
+\subsubsection{Parameters}
+Most of the parameterization used for the udacity\_bot works for the MSE6 bot, but the newly introduced geometry of the chassis requires adaptation of the costmap common parameters.
+Since the robots hitbox can't be approximated by a circle anymore it's necessary to declare its \texttt{footprint} instead of the \texttt{robot\_radius}.
+Additionally it has proven to be beneficial to increase the \texttt{inflation\_radius} to 0.7 to prevent obstacle collisions.
+\begin{table}[h]
+      \begin{center}
+            \begin{tabular}{|l|c|c|} 
+      \multicolumn{2}{c}{costmap common parameters} \\ \hline
+      footprint & [[0.375, 0.25], [0.375, -0.25], [-0.3, -0.25], [-0.3, 0.25]] \\ \hline
+      inflation\_radius & 0.7 \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+In order to stop the hokuyo laser range sensor from hitting parts of the chassis the minimum range of gazebo configuration for the hokuyo sensor had to be increased to 0.15.
 
 \section{Results}
 
