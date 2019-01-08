@@ -6,7 +6,7 @@ TrajectoryPlannerROS:
   acc_lim_x: 2.0 # (double, default: 2.5) The x acceleration limit of the robot in meters/sec^2
   # acc_lim_y: # (double, default: 2.5) The y acceleration limit of the robot in meters/sec^2
   acc_lim_theta: 2.0 # (double, default: 3.2) The rotational acceleration limit of the robot in radians/sec^2
-  # max_vel_x: 0.3 # (double, default: 0.5) The maximum forward velocity allowed for the base in meters/sec
+  max_vel_x: 0.4 # (double, default: 0.5) The maximum forward velocity allowed for the base in meters/sec
   # min_vel_x: # (double, default: 0.1) The minimum forward velocity allowed for the base in meters/sec. It is useful to specify this to guarantee that velocity commands sent to a mobile base are high enough to allow the base to overcome friction.
   # max_vel_theta: # (double, default: 1.0) The maximum rotational velocity allowed for the base in radians/sec
   # min_vel_theta: # (double, default: -1.0) The minimum rotational velocity allowed for the base in radians/sec

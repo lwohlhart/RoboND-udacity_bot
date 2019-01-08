@@ -11,7 +11,7 @@
     <remap from="scan" to="udacity_bot/laser/scan"/>
     <!-- Overall filter parameters -->
     
-    <!-- <param name="min_particles" value=""/> --> <!-- (int, default: 100)  Minimum allowed number of particles. -->
+    <param name="min_particles" value="50"/> <!-- (int, default: 100)  Minimum allowed number of particles. -->
     <param name="max_particles" value="100"/> <!-- (int, default: 5000)  Maximum allowed number of particles. -->
     <!--<param name="kld_err" value="0.05"/>--> <!-- (double, default: 0.01)  Maximum error between the true distribution and the estimated distribution. -->
     <!-- <param name="kld_z" value=""/> --> <!-- (double, default: 0.99)  Upper standard normal quantile for (1 - p), where p is the probability that the error on the estimated distrubition will be less than kld_err. -->
