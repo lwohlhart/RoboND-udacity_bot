@@ -9,6 +9,7 @@
 \usepackage[pdftex]{graphicx}    
 \usepackage{cite}
 \usepackage{hyperref}
+\usepackage{subcaption}
 % \hyphenation{op-tical net-works semi-conduc-tor}
 
 
@@ -350,7 +351,7 @@ One could also cope with the possibility of having to solve the kidnapped robot 
 
 \begin{table}[h]
       \caption{AMCL parameterization for kidnapped robots}
-      \label{tab:amcl_parameterization}
+      \label{tab:amcl_parameterization_kidnapped}
       \begin{center}
             \begin{tabular}{|l|c|}  \hline
       kld\_err & 0.005 \\ \hline
@@ -429,35 +430,64 @@ In order to stop the hokuyo laser range sensor from hitting parts of the chassis
 
 \section{Results}
 
-Present an unbiased view of your robot's performance and justify your stance with facts. Do the localization results look reasonable? What is the duration for the particle filters to converge? How long does it take for the robot to reach the goal? Does it follow a smooth path to the goal? Does it have unexpected behavior in the process? \\
+Both robots were able to accurately localize themselves in the maze and navigate successfully to the target goal location. 
+The average time required to finish the task is stated in Table~\ref{tab:navigation_performance}.
+
+\begin{table}[h]
+      \caption{Time to reach goal}
+      \label{tab:navigation_performance}
+      \begin{center}
+            \begin{tabular}{|l|c|c|} \hline
+            robot & avg. time to goal [seconds] & standard deviation\\ \hline
+            udacity\_bot & 78.50 & 4.28 \\ \hline
+            lw\_mse6\_bot & 81.04 & 6.69\\ \hline
+      \end{tabular}
+\end{center}
+\end{table}
+
+
+TODO Present an unbiased view of your robot's performance and justify your stance with facts. Do the localization results look reasonable? What is the duration for the particle filters to converge? How long does it take for the robot to reach the goal? Does it follow a smooth path to the goal? Does it have unexpected behavior in the process? \\
 For demonstrating your results, it is incredibly useful to have some watermarked charts, tables, and/or graphs for the reader to review. This makes ingesting the information quicker and easier.
 
 \subsection{Localization Results}
 \subsubsection{Benchmark}
-\begin{figure}[thpb]
+The particle filter localization quickly converges to a satisfactory pose estimate after approximately 8 seconds of motion which can be observed in Figure~\ref{fig:particle_filter_converging}. The initial distribution of particles covers the majority of the map which can yield a very inaccurate state assumption, but after a couple of motion steps and resampling intervals the estimate localizes the robot well.
+
+\begin{figure}[ht]
       \centering
-      \includegraphics[width=\linewidth]{img/particles_initial}
-      \caption{Initial AMCL particles}
-      \label{fig:initial_amcl_particles}
-\end{figure}
-\begin{figure}[thpb]
+      \begin{subfigure}[b]{0.36\textwidth}
+          \includegraphics[width=\textwidth]{img/particles_initial_high_cov}
+          \caption{initial particles}
+          \label{fig:particles_}
+      \end{subfigure}
+      \begin{subfigure}[b]{0.36\textwidth}
+          \includegraphics[width=\textwidth]{img/particles_initial_high_cov_4sec}
+          \caption{after 4 seconds of motion}
+          \label{fig:particles_}
+      \end{subfigure}
+      \begin{subfigure}[b]{0.36\textwidth}
+          \includegraphics[width=\textwidth]{img/particles_initial_high_cov_8sec}
+          \caption{after 8 seconds of motion}
+          \label{fig:particles_}
+      \end{subfigure}
+      \caption{Convergence of AMCL particle filter}
+      \label{fig:particle_filter_converging}
+  \end{figure}
+
+
+  When the udacity\_bot reaches the goal position the particles match its location rather accurately.
+
+  \begin{figure}[thpb]
       \centering
       \includegraphics[width=\linewidth]{img/udacity_bot_goal_location}
       \caption{Udacity Bot at goal location}
       \label{fig:udacity_bot_goal_location}
 \end{figure}
 
-
-
-
 \subsubsection{Student}
 
-\begin{figure}[thpb]
-      \centering
-      \includegraphics[width=\linewidth]{img/lw_mse6_bot_particles_converged}
-      \caption{AMCL particles converging}
-      \label{fig:amcl_particles_converging}
-\end{figure}
+The MSE-6 bot is also able to localize itself perfectly and manages to navigate the maze to the goal position.
+
 \begin{figure}[thpb]
       \centering
       \includegraphics[width=\linewidth]{img/lw_mse6_bot_goal_location}
@@ -466,32 +496,30 @@ For demonstrating your results, it is incredibly useful to have some watermarked
 \end{figure}
 
 \subsection{Technical Comparison} % only facts
-Discuss the difference of the layout, parameters, performance etc. between the benchmark robot and your robot. It is acceptable for your custom robot to perform worse than the provided robot. The focus is on learning and understanding, not performance. 
+The udacity\_bot performed the navigation task slightly faster as stated in Table~\ref{tab:navigation_performance}. 
+The marginally heavier and unevenly distributed chassis body of the MSE-6 causes the robot to be less agile, especially considering the turn rate. 
+The positioning of the laser range sensor on the MSE6-bot blocks some of the rays at the edges of the scanner, but this doesn't affect the localization quality dramatically.
 
 \section{Discussion}
-This is the only section of the report where you may include your opinion. However, make sure your opinion is based on facts. If your robot performed poorly, make mention of what may be the underlying issues. If the robot runs well, which aspects contribute to that? Again, avoid writing in the first person (i.e. Do not use words like "I" or "me"). If you really find yourself struggling to avoid the word "I" or "me"; sometimes, this can be avoid with the use of the word “one”. As an example: instead of : "I think the robot cannot localize itself because the sensor does not provide enough information for localization" try: "one may believe the localization performance is poor because the sensor layout is not able to provide enough information for localization". They say the same thing, but the second avoids the first person. 
+In general the localization result of both robots are very satisfactory. Even with a relatively small amount of particles the AMCL algorithm is capable of solving the global localization problem.
 
-\subsection{Topics}
-\begin{itemize}
-\item Which robot performed better?
-\item Why it performed better? (opinion)
-\item How would you approach the 'Kidnapped Robot' problem?
-\item What types of scenario could localization be performed?
-\item Where would you use MCL/AMCL in an industry domain?
-\end {itemize}
+One might assume that the superior performance of the udacity\_bot model is due to the advantageous geometry of the robot. The MSE-6 bot has to operate with a bigger footprint as well as an increased inflation\_radius of the costmap to guarantee collision free navigation. 
+Additionally the simulation of the comparably complex chassis mesh imposes a higher computational load, especially considering that it is also used for the collision model of the robot, which might also contribute to slowing down the MSE-6.
+
+The experiments concerning the 'Kidnapped Robot' problem, using the \texttt{recover\_alpha\_(slow|fast)} parameters of the AMCL node as stated in Table~\ref{tab:amcl_parameterization_kidnapped}, didn't yield overly impressive results. Eventhough the robot was eventually capable of recovering from a kidnapping, simulated by manually injecting a 2D Pose Estimate in RViz, the strategies the robot executes in order to regain orientation in its environment don't always gather helpful insights.
+The insertion of new random particles works nicely, but the robot obviously can't distinguish between ambiguous-looking locations and sometimes these particles even cause the robot to wrongly think it's stuck in non-navigable terrain.
+
+Under the assumption that one is able to provide an accurate ground-truth map of a relatively static and bounded environment, the AMCL algorithm is definitely able to solve global localization (and with proper parameterization and recovery strategies even kidnapped robot) problems. For example a warehouse scenario in which one robot operates alone in a confined space would be a very good fit.
 
 \section{Conclusion / Future work}
-This section is intended to summarize your report. Your summary should include a recap of the results, did this project achieve what you attempted, how would you deploy it on hardware and how could this project be applied to commercial products? 
-For Future Work, address areas of work that you may not have addressed in your report as possible next steps. This could be due to time constraints, lack of currently developed methods / technology, and areas of application outside of your current implementation. Again, avoid the use of the first-person.
 
-\subsection{Modifications for Improvement}
-Examples:
-\begin{itemize}
-\item Base Dimension
-\item Sensor Location
-\item Sensor Layout
-\item Sensor Amount
-\end{itemize}
+To put it in a nutshell, the AMCL particle filter appears to be a very powerful tool for solving localization tasks. Eventhough it requires a finetuned parameterization to meet the necessary accuracy and still be computationally feasible, which can be a very tedious process, the implementation itself is relatively easy and produces good pose estimates.
+
+Modelling a robot with URDF and Gazebo has shown to be a good approach to quickly develop and simulate custom robot models. With the help of 3D modelling tools one can design intricate geometries.
+
+In the future, implementing the localization method on a real world robot would definitely require adjustments with regards to the noise assumptions for the motion and the sensor models. Additionally one would have to adapt the parameterization of the algorithm to meet the possibly limited computing capabilities of a mobile robot, in order to guarantee the operation of the actuator controller at the necessary frequency.
+
+Furthermore the use of additional localization sensors, be it a second laser range sensor an RGB-D camera or other range finder technologies, would be an interesting and most likely beneficial addition.
 
 
 \bibliography{bib}
