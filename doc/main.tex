@@ -7,7 +7,8 @@
 \documentclass[10pt,journal,compsoc]{IEEEtran}
 
 \usepackage[pdftex]{graphicx}    
-% \usepackage{cite}
+\usepackage{cite}
+\usepackage{hyperref}
 % \hyphenation{op-tical net-works semi-conduc-tor}
 
 
@@ -80,6 +81,7 @@ To overcome this problem the Extended Kalman Filter (EKF) was introduced which l
 
 
 \subsection{Particle Filters}
+\label{sec:amcl}
 A particle filter algorithm for robot localization starts by instantiating a number of uniformly distributed particles each representing one guess about the position and orientation of the robot. For every particle a weight can be calculated which corresponds to the likelihood of observing the current readings from the available range-finder sensors (e.g.  lidar, RGB-D cameras or others). If a particle matches the observation compared to the ground thruth deduced from the known map better, it gets a bigger weight than others which are less likely. Every motion step of the robot is also applied to each particle with some added noise. After a specific resample interval (usually also every motion step) the particles are then randomly resampled based on their weights and new particles might be spawned in proximity to the previously higher weighted particles. 
 
 By iteratively applying the algorithm:
@@ -104,25 +106,25 @@ Table~\ref{tab:mcl_ekf_comparison}, taken from the Udacity lecture "Power of MCL
 
 %example for building table
 \begin{table}[h]
-\caption{MCL vs EKF comparison}
-\label{tab:mcl_ekf_comparison}
-\begin{center}
-\begin{tabular}{|l||c|c|}
-\hline
-& MCL & EKF\\ \hline \hline
-Measurements & Raw Measurements & Landmarks \\ \hline
-Measurement Noise &  Any &  Gaussian \\ \hline
-Posterior &  Particles & Gaussian \\ \hline
-Memory Efficiency & +  & + +  \\ \hline
-Time Efficiency&  +  & + +  \\ \hline
-Ease of Implementation & + +  & +  \\ \hline
-Resolution & +  & + + \\ \hline
-Robustness & + +  & - \\ \hline
-Memory/Resolution Control & +  & - \\ \hline
-Global Localization & +  & - \\ \hline
-State Space &  Multimodal Disc. & Unimodal Cont. \\ \hline
-\end{tabular}
-\end{center}
+      \caption{MCL vs EKF comparison}
+      \label{tab:mcl_ekf_comparison}
+      \begin{center}
+            \begin{tabular}{|l||c|c|}
+                  \hline
+                  & MCL & EKF\\ \hline \hline
+                  Measurements & Raw Measurements & Landmarks \\ \hline
+                  Measurement Noise &  Any &  Gaussian \\ \hline
+                  Posterior &  Particles & Gaussian \\ \hline
+                  Memory Efficiency & +  & + +  \\ \hline
+                  Time Efficiency&  +  & + +  \\ \hline
+                  Ease of Implementation & + +  & +  \\ \hline
+                  Resolution & +  & + + \\ \hline
+                  Robustness & + +  & - \\ \hline
+                  Memory/Resolution Control & +  & - \\ \hline
+                  Global Localization & +  & - \\ \hline
+                  State Space &  Multimodal Disc. & Unimodal Cont. \\ \hline
+            \end{tabular}
+      \end{center}
 \end{table}
 
 \section{Simulations}
@@ -131,17 +133,44 @@ State Space &  Multimodal Disc. & Unimodal Cont. \\ \hline
 % package dependencies: from clean install ( either navigation stack or separate packages: move_base, amcl, map_server ... find more)
 
 
-
-This section should discuss the performance of robots in simulation. Items to include are the robot model design, packages used, and the parameters chosen for the robot to properly localize itself. The information provided here is critical if anyone would like to replicate your results. After all, the intent of reports such as these are to convey information and build upon ideas so you want to ensure others can validate your process.
-You should have at least two images here: one that shows your standard robot used in the first part of the project, and a second robot that you modified / built that is different from the first robot. Remember to watermark all of your images as well. 
+To test the capabilities of the Adaptive Monte Carlo Localization method two robots were simulated in a ROS environment using Gazebo and RViz.
 
 \subsection{Achievements}
-You should describe what you achieved for localization in the project with the benchmark model and your own model. Includes charts and graphs show how parameters affect your performance. 
+After tweaking all necessary parameters for the involved software packages, both robot models were able to accurately localize themselves in the environment and successfully navigate through the provided maze.
 
 % Robot Models
 \subsection{Benchmark Model}
 \subsubsection{Model design}
-The Robot's design considerations should include: the size of the robot, the layout of sensors. This information can be shown in the form of a chart / table.
+
+The baseline robot model called udacity\_bot was designed using the URDF (Unified Robot Description Format) methodology, which is a XML based description standard allowing the creator to define the topology of a robot. 
+Using the SDF (Simulation Description Format), an extension to URDF introduced for Gazebo simulations, one can declare virtual sensors and actuators for the robot which are then available to use in ROS.
+By creating basic geometric objects, including 3D mesh models and linking the individual parts with joint description one can easily create a simple robot which can be rendered and simulated.
+
+
+The udacity\_bot is a differential drive robot consisting of a simple box shaped rigid body with support caster spheres for balance, which has a front facing camera and a laser range sensor attached. The wheels are modeled as cylinders connected with continuous joints to the rigid body.
+The dimension of the individual parts is shown in detail in Table~\ref{tab:udacity_bot_model} and the resulting robot model in Gazebo simulation is depicted in Figure~\ref{fig:udacity_bot}.
+
+\begin{table}[h]
+      \caption{udacity\_bot model}
+      \label{tab:udacity_bot_model}
+      \begin{center}
+            \begin{tabular}{|l||c|c|} 
+                  \hline
+                  Part & Geometry & Dimension\\ \hline \hline
+                  Chassis & Cube & 0.4 x 0.2 x 0.1 \\ 
+                  & Origin & x: 0.0 y: 0.0 z: 0.0 \\ \hline 
+                  Back/Front caster & Sphere & radius: 0.0499 \\ 
+                  & Origin & x: $\pm$ 0.15 y: 0.0 z: -0.05 \\ \hline 
+                  Left/Right Wheel & Cylinder & radius: 0.1, height: 0.05 \\ 
+                  & Origin & x: 0.0 y: $\pm$ 0.15 z: 0.0 \\ \hline \hline  
+                  Camera Sensor & Cube &  0.05 x 0.05 x 0.05\\ 
+                  & Origin & x: 0.2 y: 0.0 z: 0.0 \\ \hline 
+                  Laser Range Sensor & Mesh &  0.1 x 0.1 x 0.1\\ 
+                  (Hokuyo)  & Origin & x: 0.15 y: 0.0 z: 0.1 \\ \hline         
+            \end{tabular}
+      \end{center}
+\end{table}
+ 
 
 \begin{figure}[thpb]
       \centering
@@ -151,10 +180,137 @@ The Robot's design considerations should include: the size of the robot, the lay
 \end{figure}
 
 \subsubsection{Packages Used}
-The packages used in the project should be specified as well as the topics received and published; the services it used and provided should also be addressed. 
+
+The ROS package created for the simulation utilizes several components from the NavigationStack meta package as well as default ROS nodes. 
+All necessary external packages, which are not present in the default ROS-Kinetic installation including Gazebo and RViz tooling, are declared as dependencies in the package.xml. 
+
+Required packages:
+\begin{itemize}
+ \item rviz
+ \item gazebo\_ros
+ \item joint\_state\_publisher
+ \item robot\_state\_publisher
+ \item map\_server \cite{ROSNavMapServer} 
+ \item amcl \cite{ROSNavAMCL}
+ \item move\_base \cite{ROSNavMoveBase}
+\end{itemize}
+
+Launching the udacity\_world.launch combines all required nodes to fire up the simulation environment.
+The gazebo\_ros empty\_world.launch starts a plain Gazebo physics simulation world and loads the world model declared in jackal\_race.world.
+With the help of \texttt{gazebo\_ros} spawn\_model, \texttt{joint\_state\_publisher} and \texttt{robot\_state\_publisher} one can instantiate the URDF+SDF robot model defined in the robot\_description.launch file.
+
+The \texttt{map\_server} package is used to load and publish the maze map defined in jackal\_race.yaml and jackal\_race.pgm.
+
+Once the environment is set up, the \texttt{AMCL} node implementing the localization using a particle filter as described in section~\ref{sec:amcl} starts, subscribing to the laser scan published from the hokuyo sensor and the map.
+The \texttt{move\_base} package provides the move\_base node which takes care of planning and executing the motions to navigate to a specified goal position.
+A custom C++ node is included in the package which simply uses the move\_base action server to send this goal location and wait for the robot to arrive there.
+
+
 
 \subsubsection{Parameters}
+
+Tuning the parameters of the AMCL localization node as well as the path and motion planner node of the move\_base package to the requirements of the application is the crucial aspect to solve the localization and navigation task.
+Initially following the guidelines of ROSNavigationGuide\cite{ROSNavigationGuide} and iteratively adapting the parameterization yielded the following configuration.
+
+
+\begin{table}[h]
+      \caption{Costmap parameterization}
+      \label{tab:costmap_parameterization}
+      \begin{center}
+            \begin{tabular}{|l|c|}  
+\multicolumn{2}{c}{Costmap common} \\ \hline 
+obstacle\_range & 2.5  \\ \hline
+raytrace\_range & 3.0  \\ \hline
+transform\_tolerance& 0.2 \\ \hline
+robot\_radius& 0.25 \\ \hline
+inflation\_radius & 0.5 \\ \hline 
+
+\multicolumn{2}{c}{Global costmap} \\ \hline 
+   update\_frequency &  10.0 \\ \hline
+   publish\_frequency &  5.0 \\ \hline
+   width &  10.0 \\ \hline
+   height &  10.0 \\ \hline
+   resolution &  0.1 \\ \hline
+   static\_map &  true \\ \hline
+   rolling\_window &  false \\ \hline
+
+\multicolumn{2}{c}{Local costmap} \\ \hline 
+   update\_frequency &  10.0 \\ \hline
+   publish\_frequency &  5.0 \\ \hline
+   width &  3.0 \\ \hline
+   height &  3.0 \\ \hline
+   resolution &  0.1 \\ \hline
+   static\_map &  false \\ \hline
+   rolling\_window &  true \\ \hline
+            \end{tabular}
+      \end{center}
+\end{table}
+
+The parameters \texttt{obstacle\_range} and \texttt{raytrace\_range} define the distance of the laser range sensor readings to consider while updating the costmap with incoming evidence.
+
+Since the measurement process and the update of the transformation tree is not time syncronised one has to allow for a small time delay by adjusting the \texttt{transform\_tolerance}. Though, this tolerance shouldn't be excessive because updating the map based on an outdated pose estimate deteriorates the result.
+
+The \texttt{inflation\_radius} defines the extent to which the cost of a detected obstacle is affecting the unoccupied terrain around it.
+Together with the \texttt{robot\_radius} it is used to define how strongly the navigation algorithm avoids coming close to obstacles.
+
+Both maps are regulary updated and published with their respective frequencies.
+The global costmap is a static map covering 
+
+both maps: computability
+width
+height
+resolution
+
+
+
+\begin{table}[h]
+      \caption{NavFN local trajectory planner parameterization}
+      \label{tab:planner_parameterization}
+      \begin{center}
+            \begin{tabular}{|l|c|}  \hline
+      acc\_lim\_x & 2.0 \\ \hline
+      acc\_lim\_theta & 2.0 \\ \hline
+      max\_vel\_x & 0.4 \\ \hline
+      holonomic\_robot & false \\ \hline
+      sim\_time & 1.5 \\ \hline
+      vx\_samples & 10 \\ \hline
+      controller\_frequency & 10.0 \\ \hline
+      meter\_scoring & true \\ \hline
+      pdist\_scale & 3.5 \\ \hline
+            \end{tabular}
+      \end{center}
+\end{table}                  
+
+sim\_time
+controller\_frequency
+vx\_samples
+
+
 Localization parameters in the AMCL node should be described, as well as move\_base parameters in the configuration file. You should be able to clearly demonstrate your understanding of the impact of these parameters.
+
+\begin{table}[h]
+      \caption{AMCL parameterization}
+      \label{tab:amcl_parameterization}
+      \begin{center}
+            \begin{tabular}{|l|c|}  \hline
+min\_particles & 50 \\ \hline
+max\_particles & 100 \\ \hline
+update\_min\_d & 0.1 \\ \hline
+update\_min\_a & 0.26 \\ \hline
+resample\_interval & 1 \\ \hline
+recovery\_alpha\_slow & 0.001 \\ \hline
+recovery\_alpha\_fast & 0.1 \\ \hline
+
+laser\_max\_beams & 60 \\ \hline
+% odom\_model\_type & diff \\ \hline
+odom\_alpha1 & 0.05 \\ \hline
+odom\_alpha2 & 0.05 \\ \hline
+odom\_alpha3 & 0.05 \\ \hline
+odom\_alpha4 & 0.05 \\ \hline
+\end{tabular}
+\end{center}
+\end{table}                  
+
 
 \subsection{Personal Model}
 % ditto
@@ -241,8 +397,6 @@ Examples:
 \item Sensor Layout
 \item Sensor Amount
 \end{itemize}
-
-\cite{lamport1994latex}
 
 
 \bibliography{bib}
