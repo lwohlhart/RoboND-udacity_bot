@@ -71,7 +71,7 @@ Watch the [Imperial MSE-6](http://starwars.wikia.com/wiki/MSE-6-series_repair_dr
 
 To simulate the udacity_bot simply change the *robot_description* parameter in the *robot_description.launch* file by uncommenting line 5 and commenting line 6 to:
 ```xml
-    <param name="robot_description" command="$(find xacro)/xacro - -inorder '$(find udacity_bot)/urdf/udacity_bot.xacro'"/>
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find udacity_bot)/urdf/udacity_bot.xacro'"/>
     <!--<param name="robot_description" command="$(find xacro)/xacro - -inorder '$(find udacity_bot)/urdf/lw_mse6_bot.xacro'"/>-->
 ```
 and change the config *costmap_common_params.yaml* to fit the udacity_bot dimensions
