@@ -59,7 +59,7 @@
             <visualize>false</visualize>
             <update_rate>40</update_rate>
             <ray>
-                <scan>2
+                <scan>
                     <horizontal>
                         <samples>720</samples>
                         <resolution>1</resolution>
